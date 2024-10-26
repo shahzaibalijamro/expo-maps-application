@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Platform, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
+import { FlatList, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from 'expo-location';
 
@@ -7,7 +7,8 @@ export default function Index() {
   const [location, setLocation] = useState<null | any>(null);
   const [errorMsg, setErrorMsg] = useState<null | string>(null);
   const [search, setSearch] = useState<string>('')
-  const [searchedPlaceRes, setSearchedPlaceRes] = useState<null | object>(null)
+  const [searchedPlaceRes, setSearchedPlaceRes] = useState<object[]>([])
+  const relatedSearches = ['1','2','3','4','5','6']
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -19,7 +20,6 @@ export default function Index() {
       setLocation(location);
     })();
   }, []);
-
   let text = 'Waiting..';
   if (errorMsg) {
     text = errorMsg;
@@ -35,7 +35,6 @@ export default function Index() {
         Authorization: 'fsq3LoSdxiQR8tPtqqziL6Ki/xmy3h57IHjyUtrMs0xrVdc='
       }
     };
-
     fetch(`https://api.foursquare.com/v3/places/search?query=${search}&ll=${location.coords.latitude}%2C${location.coords.longitude}&radius=100000`, options)
       .then(res => res.json())
       .then(res => {
@@ -57,6 +56,18 @@ export default function Index() {
             onChangeText={setSearch}
             keyboardType="default"
           />
+          {searchedPlaceRes.length > 0 && searchedPlaceRes.map((item,index) =>{
+            return <FlatList
+            data={relatedSearches}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <TouchableOpacity>
+                <Text style={styles.itemText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            style={styles.list}
+          />
+          })}
           <MapView
             style={styles.map}
             mapType="hybrid"
@@ -106,5 +117,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'gray',
+  },list: {
+    maxHeight: 150, // Limits the height of the list
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    position: 'absolute',
+    top: 110,  // Adjust position below TextInput
+    left: 15,
+    right: 15,
+    zIndex: 2
+  },
+  itemText: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
 });
