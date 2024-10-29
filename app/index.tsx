@@ -7,8 +7,9 @@ export default function Index() {
   const [location, setLocation] = useState<null | any>(null);
   const [errorMsg, setErrorMsg] = useState<null | string>(null);
   const [search, setSearch] = useState<string>('')
-  const [searchedPlaceRes, setSearchedPlaceRes] = useState<object[]>([])
-  const relatedSearches = ['1','2','3','4','5','6']
+  const [searchedPlaceRes, setSearchedPlaceRes] = useState<any>([])
+  const [selectedLocation, setSelectedLocation] = useState<any>(null)
+  const [visibleRegion, setVisibleRegion] = useState<any>(null)
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -18,6 +19,12 @@ export default function Index() {
       }
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+      setVisibleRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.007,
+        longitudeDelta: 0.007,
+      })
     })();
   }, []);
   let text = 'Waiting..';
@@ -26,8 +33,22 @@ export default function Index() {
   } else if (location) {
     text = JSON.stringify(location);
   }
+  const goToSelectedLocation = (item: any) => {
+    console.log(item.distance);
+    setSearchedPlaceRes([])
+    setSelectedLocation({
+      latitude: item.geocodes.main.latitude,
+      longitude: item.geocodes.main.longitude
+    })
+    setVisibleRegion({
+      latitude: item.geocodes.main.latitude,
+      longitude: item.geocodes.main.longitude,
+      latitudeDelta: 0.007,
+      longitudeDelta: 0.007,
+    })
+  }
+  console.log(selectedLocation)
   const getPlaces = () => {
-    console.log(search);
     const options = {
       method: 'GET',
       headers: {
@@ -42,7 +63,6 @@ export default function Index() {
       })
       .catch(err => console.error(err));
   }
-  console.log(searchedPlaceRes);
   return (
     <SafeAreaView style={styles.container}>
       {location && (
@@ -56,28 +76,30 @@ export default function Index() {
             onChangeText={setSearch}
             keyboardType="default"
           />
-          {searchedPlaceRes.length > 0 && searchedPlaceRes.map((item,index) =>{
-            return <FlatList
-            data={relatedSearches}
-            keyExtractor={(item) => item}
+          {searchedPlaceRes.length > 0 && <FlatList
+            data={search.length > 0 ? searchedPlaceRes : setSearchedPlaceRes([])}
+            keyExtractor={(item) => item.fsq_id}
             renderItem={({ item }) => (
-              <TouchableOpacity>
-                <Text style={styles.itemText}>{item}</Text>
+              <TouchableOpacity onPress={() => { goToSelectedLocation(item) }}>
+                <View style={styles.itemView}>
+                  <Text style={styles.itemText1}>{item.name}</Text>
+                  <Text style={styles.itemText2}>{item.location.cross_street && item.location.cross_street !== ""
+                    ? item.location.cross_street
+                    : item.location.formatted_address && item.location.formatted_address !== "" ? item.location.formatted_address : item.location.country}</Text>
+                </View>
               </TouchableOpacity>
             )}
             style={styles.list}
           />
-          })}
+          }
           <MapView
             style={styles.map}
             mapType="hybrid"
-            initialRegion={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            }}
+            region={visibleRegion}
           >
+            {selectedLocation && <Marker
+              coordinate={selectedLocation}
+            />}
             <Marker
               coordinate={{
                 latitude: location.coords.latitude,
@@ -95,13 +117,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flexRow: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
+  },
   mapContainer: {
     flex: 1,
     position: 'relative',
   },
   map: {
     width: '100%',
-    height: '100%',
+    height: '110%',
   },
   input: {
     position: 'absolute',
@@ -117,22 +143,31 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: 'gray',
-  },list: {
-    maxHeight: 150, // Limits the height of the list
+  }, list: {
+    maxHeight: 150,
     backgroundColor: '#fff',
     borderRadius: 5,
     borderColor: '#ddd',
     borderWidth: 1,
     position: 'absolute',
-    top: 110,  // Adjust position below TextInput
+    top: 110,
     left: 15,
     right: 15,
     zIndex: 2
   },
-  itemText: {
-    paddingVertical: 15,
+  itemView: {
+    paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  itemText1: {
+    paddingBottom: 5,
+    fontWeight: "600",
+    fontSize: 15
+  },
+  itemText2: {
+    fontWeight: "400",
+    fontSize: 12
   },
 });
