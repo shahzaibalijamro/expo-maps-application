@@ -1070,7 +1070,7 @@ const styles = StyleSheet.create({
     width: '100%', // Fully filled when on the 2nd page
   },
   optionsContainer: {
-    marginTop: 20,
+    marginTop: 10,
   },
   optionButton: {
     flexDirection: 'row',
@@ -1079,7 +1079,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 10,
-    marginVertical: 10,
+    marginBottom: 10,
   },
   optionText: {
     fontSize: 18,
