@@ -998,6 +998,7 @@ import {
   NotoSansEthiopic_900Black,
 } from '@expo-google-fonts/noto-sans-ethiopic';
 import * as SplashScreen from 'expo-splash-screen';
+import { router } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -1008,6 +1009,9 @@ const App = () => {
     NotoSansEthiopic_600SemiBold
   });
   useEffect(() => {
+    setTimeout(()=>{
+      router.push('/login')
+    },2000)
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
