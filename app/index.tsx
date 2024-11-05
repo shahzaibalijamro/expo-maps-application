@@ -978,7 +978,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useFonts } from 'expo-font';
 import {
@@ -986,6 +986,15 @@ import {
   OpenSans_600SemiBold,
   OpenSans_700Bold,
 } from '@expo-google-fonts/open-sans';
+import { NotoSansEthiopic_100Thin,
+  NotoSansEthiopic_200ExtraLight,
+  NotoSansEthiopic_300Light,
+  NotoSansEthiopic_400Regular,
+  NotoSansEthiopic_500Medium,
+  NotoSansEthiopic_600SemiBold,
+  NotoSansEthiopic_700Bold,
+  NotoSansEthiopic_800ExtraBold,
+  NotoSansEthiopic_900Black, } from '@expo-google-fonts/noto-sans-ethiopic';
 import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 const App = () => {
@@ -994,6 +1003,7 @@ const App = () => {
     OpenSans_400Regular,
     OpenSans_600SemiBold,
     OpenSans_700Bold,
+    NotoSansEthiopic_600SemiBold
   });
   useEffect(() => {
     if (fontsLoaded) {
@@ -1022,12 +1032,13 @@ const App = () => {
       {currentPage === 1 ? (
         <View style={styles.optionsContainer}>
           <TouchableOpacity style={styles.optionButton} onPress={nextPage}>
-            <Text style={{fontSize:37,marginTop:-20,marginRight:15}}>🚗</Text>
+            <Image style={styles.iconImg} source={require('../assets/images/car.png')}/>
             <Text style={styles.optionText}>Get ride</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.optionButton} onPress={nextPage}>
-            <Text style={{fontSize:30,marginTop:-5,marginRight:25}}>📦</Text>
-            <Text style={styles.optionText}>Order delivery</Text>
+          <Image style={styles.iconImg} source={require('../assets/images/delivery-box.png')}/>
+          <Text style={styles.optionText}>Order delievery
+          </Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -1045,14 +1056,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#9ed90d', // Background color matching your design
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 30,
   },
   header: {
     marginBottom: 10,
   },
+  iconImg: {
+    width: 35,
+    height: 35,
+    marginEnd: 15,
+    marginStart: 5
+  },
   headerText: {
     fontSize: 24,
     fontFamily: 'OpenSans_700Bold',
+    marginVertical : 15
   },
   progressContainer: {
     height: 5,
@@ -1082,7 +1100,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   optionText: {
-    fontSize: 18,
+    fontSize: 17,
+    fontFamily: 'NotoSansEthiopic_600SemiBold'
   },
   questionContainer: {
     marginTop: 20,
