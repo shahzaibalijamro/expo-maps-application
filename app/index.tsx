@@ -37,40 +37,41 @@ export default function Index() {
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [visibleRegion, setVisibleRegion] = useState<any>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<LocationData[]>([]);
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('465');
-      if (value === null) {
-        router.replace("/login")
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  getData()
   SplashScreen.preventAutoHideAsync();
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
-        return;
-      }
+    const getData = async () => {
       try {
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-        setVisibleRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.007,
-          longitudeDelta: 0.007,
-        });
-      } catch (error) {
-        Alert.alert('Could not fetch location');
-      }finally{
-        setAppIsReady(true);
+        const value = await AsyncStorage.getItem('465');
+        if (value === null) {
+          router.replace("/login")
+        }else{
+          (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permission to access location was denied');
+              return;
+            }
+            try {
+              let location = await Location.getCurrentPositionAsync({});
+              setLocation(location);
+              setVisibleRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.007,
+                longitudeDelta: 0.007,
+              });
+            } catch (error) {
+              Alert.alert('Could not fetch location');
+            }finally{
+              setAppIsReady(true);
+            }
+          })();
+        }
+      } catch (e) {
+        console.log(e);
       }
-    })();
+    };
+    getData();
   }, []);
 
   const goToSelectedLocation = (item: Place) => {
