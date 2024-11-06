@@ -48,13 +48,6 @@ export default function Index() {
     }
   };
   getData()
-  const storeData = async () => {
-    try {
-      await AsyncStorage.setItem('newUser', 'true');
-    } catch (e) {
-      console.log(e);
-    }
-  };
   SplashScreen.preventAutoHideAsync();
   useEffect(() => {
     (async () => {

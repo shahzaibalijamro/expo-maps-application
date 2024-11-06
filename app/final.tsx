@@ -7,6 +7,7 @@ import {
   OpenSans_600SemiBold,
   OpenSans_700Bold,
 } from '@expo-google-fonts/open-sans';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   NotoSansEthiopic_100Thin,
   NotoSansEthiopic_200ExtraLight,
@@ -30,9 +31,6 @@ const App = () => {
     NotoSansEthiopic_600SemiBold
   });
   useEffect(() => {
-    setTimeout(()=>{
-      router.push('/login')
-    },2000)
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
@@ -41,7 +39,18 @@ const App = () => {
   if (!fontsLoaded) {
     return null;
   }
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem('newUser', 'true');
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const nextPage = () => {
+    storeData()
+    if (currentPage === 2) {
+      router.push("/")
+    }
     setCurrentPage(2);
   };
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text,Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import {
   OpenSans_400Regular,
   OpenSans_600SemiBold,
@@ -7,47 +7,47 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { router } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 export default function LocationPermissionScreen() {
   const handleEnableLocation = () => {
-    // Add code to request location permissions
-    console.log("Location Enabled");
+    router.push("/confirmCity")
   };
 
   const handleSkip = () => {
-    console.log("Skipped");
-    // Navigate to the next screen or close modal
+    Alert.alert("Please enable location services to proceed!")
   };
   const [fontsLoaded] = useFonts({
-        OpenSans_400Regular,
-        OpenSans_600SemiBold,
-        OpenSans_700Bold,
-      });
-      useEffect(() => {
-        if (fontsLoaded) {
-          SplashScreen.hideAsync();
-        }
-      }, [fontsLoaded]);
+    OpenSans_400Regular,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+  });
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
-      if (!fontsLoaded) {
-        return null;
-      }
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <View style={styles.container}>
       {/* Illustration */}
       <View style={styles.imageContainer}>
         <Image source={require('../assets/images/undraw_Location_tracking_re_n3ok-removebg.png')} style={styles.image} />
+        <Text style={styles.title}>Turn your location on</Text>
+        <Text style={styles.description}>
+          You’ll be able to find yourself on the map, and drivers will be able to find you at the pickup point
+        </Text>
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>Turn your location on</Text>
 
       {/* Description */}
-      <Text style={styles.description}>
-        You’ll be able to find yourself on the map, and drivers will be able to find you at the pickup point
-      </Text>
 
       {/* Buttons */}
+      <View style={styles.buttonWrapper}>
       <TouchableOpacity style={styles.enableButton} onPress={handleEnableLocation}>
         <Text style={styles.enableButtonText}>Enable location services</Text>
       </TouchableOpacity>
@@ -55,6 +55,7 @@ export default function LocationPermissionScreen() {
       <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
         <Text style={styles.skipButtonText}>Skip</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -66,12 +67,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    position: 'relative'
   },
   imageContainer: {
-    marginBottom: 20,
     alignItems: 'center',
+    position: 'absolute',
+    top: 100
   },
   image: {
+    marginBottom: 20,
     width: 250, // Adjust size according to your image
     height: 250,
     resizeMode: 'contain',
@@ -94,7 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#9ed90d',
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 10,
     width: '100%',
     alignItems: 'center',
     marginBottom: 10,
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
   skipButton: {
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 10,
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#333333',
@@ -116,4 +120,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
   },
+  buttonWrapper: {width: '100%',position: 'absolute',bottom:20}
 });

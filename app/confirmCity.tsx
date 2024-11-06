@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import {
   OpenSans_400Regular,
   OpenSans_600SemiBold,
@@ -16,16 +16,15 @@ import { NotoSansEthiopic_100Thin,
   NotoSansEthiopic_800ExtraBold,
   NotoSansEthiopic_900Black, } from '@expo-google-fonts/noto-sans-ethiopic';
 import * as SplashScreen from 'expo-splash-screen';
+import { router } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 export default function LocationPermissionScreen() {
   const handleEnableLocation = () => {
-    // Add code to request location permissions
-    console.log("Location Enabled");
+    router.push("/final")
   };
 
   const handleSkip = () => {
-    console.log("Skipped");
-    // Navigate to the next screen or close modal
+    Alert.alert("Don't Lie!")
   };
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,

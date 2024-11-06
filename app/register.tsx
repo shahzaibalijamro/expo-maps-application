@@ -9,9 +9,11 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 SplashScreen.preventAutoHideAsync();
 export default function ConfirmInfoScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [image, setImage] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     OpenSans_600SemiBold,
@@ -29,6 +31,24 @@ export default function ConfirmInfoScreen() {
   if (!fontsLoaded) {
     return null;
   }
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+  const registerUser = () =>{
+    router.push("/city")
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -38,11 +58,14 @@ export default function ConfirmInfoScreen() {
       <Text style={styles.header}>Confirm your information</Text>
 
       <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: 'https://instagram.fkhi22-1.fna.fbcdn.net/v/t51.2885-19/458925334_1022503086235063_7228415357725335161_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fkhi22-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=Ps5jUMZ6JS0Q7kNvgEpF_Bg&_nc_gid=ee7004b0d40e4e999bf80cf042311c5c&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AYDMCkcE2bFA-U7vET_cR-Kb46uQP99zxOgK2_pVv89EAg&oe=672C6994&_nc_sid=7d3ac5' }} // Replace with the user's profile image URL
+        {image ? <Image
+          source={{ uri: image }}
           style={styles.profileImage}
-        />
-        <TouchableOpacity style={styles.addIcon}>
+        /> : <Image
+        source={{ uri: 'https://instagram.fkhi22-1.fna.fbcdn.net/v/t51.2885-19/458925334_1022503086235063_7228415357725335161_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fkhi22-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=Ps5jUMZ6JS0Q7kNvgEpF_Bg&_nc_gid=ee7004b0d40e4e999bf80cf042311c5c&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AYDMCkcE2bFA-U7vET_cR-Kb46uQP99zxOgK2_pVv89EAg&oe=672C6994&_nc_sid=7d3ac5' }}
+        style={styles.profileImage}
+      />}
+        <TouchableOpacity style={styles.addIcon} onPress={pickImage}>
           <FontAwesome name="plus" size={16} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -53,9 +76,9 @@ export default function ConfirmInfoScreen() {
       </View>
 
       <View style={{ ...styles.disabledInputContainer, borderRadius: 10 }}>
-        <Text style={{...styles.label, color: '#8e8e93' }}>Email</Text>
+        <Text style={{ ...styles.label, color: '#8e8e93' }}>Email</Text>
         <TextInput
-          style={{...styles.input, color: '#8e8e93' }}
+          style={{ ...styles.input, color: '#8e8e93' }}
           value="jamroshahzaibali69@gmail.com"
           editable={false}
         />
@@ -82,7 +105,7 @@ export default function ConfirmInfoScreen() {
         />
       </View>
 
-      <TouchableOpacity style={styles.nextButton}>
+      <TouchableOpacity style={styles.nextButton} onPress={registerUser}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
     </View>

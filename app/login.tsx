@@ -8,7 +8,6 @@ import {
   SafeAreaView, 
   Image } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import {
   OpenSans_400Regular,
   OpenSans_600SemiBold,
