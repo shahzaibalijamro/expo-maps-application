@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text,Image, StyleSheet, TouchableOpacity } from 'react-native';
 import {
   OpenSans_400Regular,
   OpenSans_600SemiBold,

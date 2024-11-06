@@ -40,20 +40,19 @@ export default function JoinScreen() {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Join us via phone number</Text>
-      <Text style={styles.subtitle}>We’ll text a code to verify your phone</Text>
+      <Text style={styles.title}>Join us via email address</Text>
+      <Text style={styles.subtitle}>We’ll mail a code to verify your phone</Text>
 
       <View style={styles.inputContainer}>
         <TouchableOpacity style={styles.countryPicker}>
-          <Text style={styles.flag}>🇵🇰</Text>
-          <AntDesign name="caretdown" size={12} color="#fff" />
+          <Text style={styles.flag}>✉️</Text>
         </TouchableOpacity>
 
         <TextInput
           style={styles.input}
-          placeholder="Enter phone number"
+          placeholder="Enter your email"
           placeholderTextColor="#888"
-          keyboardType="phone-pad"
+          keyboardType="email-address"
           value={phoneNumber}
           onChangeText={setPhoneNumber}
         />
@@ -128,6 +127,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     paddingVertical: 10,
     fontSize: 16,
+    fontFamily: 'OpenSans_400Regular'
   },
   nextButton: {
     backgroundColor: '#9ed90d',

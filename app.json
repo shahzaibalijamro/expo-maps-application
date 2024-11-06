@@ -39,6 +39,12 @@
         {
           "fonts": ["node_modules/@expo-google-fonts/OpenSans_700Bold.ttf"]
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
       ]
     ],
     "experiments": {

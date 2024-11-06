@@ -49,13 +49,13 @@ export default function ConfirmInfoScreen() {
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Name</Text>
-        <TextInput style={styles.input} value="Shahzaib Ali" editable={false} />
+        <TextInput style={styles.input} value="Shahzaib Ali" />
       </View>
 
       <View style={{ ...styles.disabledInputContainer, borderRadius: 10 }}>
-        <Text style={{ color: '#8e8e93' }}>Email</Text>
+        <Text style={{...styles.label, color: '#8e8e93' }}>Email</Text>
         <TextInput
-          style={{ color: '#8e8e93' }}
+          style={{...styles.input, color: '#8e8e93' }}
           value="jamroshahzaibali69@gmail.com"
           editable={false}
         />
@@ -73,7 +73,6 @@ export default function ConfirmInfoScreen() {
             flex: 1,
             color: '#ffffff',
             paddingVertical: 5,
-            fontSize: 14,
           }}
           placeholder="Enter phone number"
           placeholderTextColor="#888"
@@ -99,19 +98,19 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   header: {
     fontSize: 24,
     // fontWeight: 'bold',
     fontFamily: 'OpenSans_700Bold',
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 25,
     textAlign: 'left',
   },
   profileContainer: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: 35,
     width: 120,
     marginHorizontal: 'auto'
   },
@@ -149,9 +148,13 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#8e8e93',
+    fontSize: 15,
+    fontFamily: 'OpenSans_400Regular'
   },
   input: {
     color: '#fff',
+    fontSize: 16,
+    fontFamily: 'OpenSans_400Regular'
   },
   disabledInputContainer: {
     backgroundColor: '#495563',
