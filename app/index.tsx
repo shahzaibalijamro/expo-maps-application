@@ -4,6 +4,8 @@ import MapView, { Callout, Marker, Polyline } from "react-native-maps";
 import polyline from 'polyline-encoded';
 import * as Location from 'expo-location';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 interface LocationData {
   latitude: number;
   longitude: number;
@@ -35,6 +37,24 @@ export default function Index() {
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
   const [visibleRegion, setVisibleRegion] = useState<any>(null);
   const [routeCoordinates, setRouteCoordinates] = useState<LocationData[]>([]);
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('newUser');
+      if (value === null) {
+        router.replace("/login")
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  getData()
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem('newUser', 'true');
+    } catch (e) {
+      console.log(e);
+    }
+  };
   SplashScreen.preventAutoHideAsync();
   useEffect(() => {
     (async () => {

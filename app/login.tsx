@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image } from 'react-native';
+import {
+  View,
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  SafeAreaView, 
+  Image } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { FontAwesome } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {
   OpenSans_400Regular,
@@ -9,6 +15,7 @@ import {
   OpenSans_700Bold,
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
+import { router } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -17,15 +24,19 @@ export default function JoinScreen() {
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
-
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-
   if (!fontsLoaded) {
     return null;
+  }
+  const continuewithGoogle = () =>{
+    router.navigate("/register")
+  }
+  const continuewithPhone = () =>{
+    router.push("/register")
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -35,7 +46,6 @@ export default function JoinScreen() {
       <View style={styles.inputContainer}>
         <TouchableOpacity style={styles.countryPicker}>
           <Text style={styles.flag}>🇵🇰</Text>
-          {/* <FontAwesome name="chevron-down" size={12} color="#fff" /> */}
           <AntDesign name="caretdown" size={12} color="#fff" />
         </TouchableOpacity>
 
@@ -49,13 +59,13 @@ export default function JoinScreen() {
         />
       </View>
 
-      <TouchableOpacity style={styles.nextButton}>
+      <TouchableOpacity style={styles.nextButton} onPress={continuewithPhone}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
 
       <Text style={styles.orText}>Or login with</Text>
 
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity style={styles.googleButton} onPress={continuewithGoogle}>
         <Image
           source={{ uri: 'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA' }}
           style={{ width: 20, height: 20, marginRight: 8 }}
@@ -120,7 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   nextButton: {
-    backgroundColor: '#77dd76',
+    backgroundColor: '#9ed90d',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',

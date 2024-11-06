@@ -8,6 +8,7 @@ import {
   OpenSans_700Bold,
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
+import { router } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 export default function ConfirmInfoScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -17,9 +18,12 @@ export default function ConfirmInfoScreen() {
     OpenSans_700Bold,
   });
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
+    const prepareApp = async () => {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    };
+    prepareApp();
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
@@ -27,7 +31,7 @@ export default function ConfirmInfoScreen() {
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
         <FontAwesome name="arrow-left" size={24} color="#fff" />
       </TouchableOpacity>
 
