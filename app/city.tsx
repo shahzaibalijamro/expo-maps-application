@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import {
   OpenSans_400Regular,
@@ -7,13 +7,40 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import * as Location from 'expo-location';
 SplashScreen.preventAutoHideAsync();
 export default function LocationPermissionScreen() {
-  const handleEnableLocation = () => {
-    router.push("/confirmCity")
+  const [location, setLocation] = useState<null | object>(null);
+  const [currentCity,setCurrentCity] = useState<string>('')
+  const handleEnableLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission to access location was denied');
+      return;
+    }
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      const apiKey = "AlzaSyqcM2y85JecIqQm1XJgzVmfsmuKPtesB3b"; // Replace with your API key
+      const url = `https://maps.gomaps.pro/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status === "OK") {
+        const addressComponents = data.results[0].address_components;
+        const city = addressComponents.find((component:any) =>
+          component.types.includes("locality")
+        );
+        city && setCurrentCity(city.long_name);
+        router.push(`/confirmCity?city=${encodeURIComponent(city.long_name)}`);
+      } else {
+        console.error("Geocoding error:", data.status);
+        return "Error in retrieving city";
+      }
+    } catch (error) {
+      Alert.alert('Could not fetch location');
+    }
   };
-
   const handleSkip = () => {
     Alert.alert("Please enable location services to proceed!")
   };
@@ -48,13 +75,13 @@ export default function LocationPermissionScreen() {
 
       {/* Buttons */}
       <View style={styles.buttonWrapper}>
-      <TouchableOpacity style={styles.enableButton} onPress={handleEnableLocation}>
-        <Text style={styles.enableButtonText}>Enable location services</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.enableButton} onPress={handleEnableLocation}>
+          <Text style={styles.enableButtonText}>Enable location services</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
-        <Text style={styles.skipButtonText}>Skip</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+          <Text style={styles.skipButtonText}>Skip</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -120,5 +147,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
   },
-  buttonWrapper: {width: '100%',position: 'absolute',bottom:20}
+  buttonWrapper: { width: '100%', position: 'absolute', bottom: 20 }
 });

@@ -39,7 +39,7 @@ export default function Index() {
   const [routeCoordinates, setRouteCoordinates] = useState<LocationData[]>([]);
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('newUser');
+      const value = await AsyncStorage.getItem('465');
       if (value === null) {
         router.replace("/login")
       }

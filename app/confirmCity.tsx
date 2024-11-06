@@ -16,9 +16,11 @@ import { NotoSansEthiopic_100Thin,
   NotoSansEthiopic_800ExtraBold,
   NotoSansEthiopic_900Black, } from '@expo-google-fonts/noto-sans-ethiopic';
 import * as SplashScreen from 'expo-splash-screen';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 SplashScreen.preventAutoHideAsync();
 export default function LocationPermissionScreen() {
+  const {city} = useLocalSearchParams();
+  console.log(city);
   const handleEnableLocation = () => {
     router.push("/final")
   };
@@ -49,7 +51,7 @@ export default function LocationPermissionScreen() {
       {/* Illustration */}
       <View style={styles.imageContainer}>
         <Image source={require('../assets/images/undraw_My_current_location_re_whmt (2).png')} style={styles.image} />
-        <Text style={styles.title}>Are you in Karachi?</Text>
+        <Text style={styles.title}>Are you in {city}?</Text>
       </View>
 
       {/* Buttons */}
