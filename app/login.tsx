@@ -94,25 +94,26 @@ export default function JoinScreen() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     console.log(emailRegex.test(email))
     if (emailRegex.test(email) && password.length >= 8) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          showToast('success', 'Success', 'Logging in!')
-          setTimeout(() => {
-            router.push("/register")
-          }, 1500);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          if (errorCode === 'auth/email-already-in-use') {
-            showToast('success', 'Email is already registered!', 'Please log in instead!')
-            // setTimeout(() => {
-            //   router.push("/register")
-            // }, 1500);
-          }else{
-            showToast('error', errorMessage.slice(10, 15), errorCode)
-          }
-        });
+      
+      // createUserWithEmailAndPassword(auth, email, password)
+      //   .then((userCredential) => {
+      //     showToast('success', 'Success', 'Logging in!')
+      //     setTimeout(() => {
+      //       router.push("/register")
+      //     }, 1500);
+      //   })
+      //   .catch((error) => {
+      //     const errorCode = error.code;
+      //     const errorMessage = error.message;
+      //     if (errorCode === 'auth/email-already-in-use') {
+      //       showToast('success', 'Email is already registered!', 'Please log in instead!')
+      //       // setTimeout(() => {
+      //       //   router.push("/register")
+      //       // }, 1500);
+      //     }else{
+      //       showToast('error', errorMessage.slice(10, 15), errorCode)
+      //     }
+      //   });
     } else if (emailRegex.test(email) === false && password.length >= 8) {
       showToast('error', 'Error', 'Invalid email syntax')
     } else if (emailRegex.test(email) && password.length <= 8) {
