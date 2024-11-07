@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, provider } from "@/config/firebase/config.js"
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Alert
+} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   OpenSans_400Regular,
@@ -9,106 +19,161 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 SplashScreen.preventAutoHideAsync();
-export default function ConfirmInfoScreen() {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [image, setImage] = useState<string | null>(null);
+export default function JoinScreen() {
+  const toastConfig = {
+    success: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: '#9ed90d', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: '#FF0000', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+  };
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
+  const showToast = (type: string, heading: string, paragraph: string) => {
+    Toast.show({
+      type: type,
+      text1: heading,
+      text2: paragraph
+    });
+  }
   useEffect(() => {
-    const prepareApp = async () => {
-      if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-      }
-    };
-    prepareApp();
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
   }, [fontsLoaded]);
-
   if (!fontsLoaded) {
     return null;
   }
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+  const continuewithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+        const user = result.user;
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+    // router.navigate("/register")
+  }
+  const continuewithEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log(emailRegex.test(email))
+    if (emailRegex.test(email) && password.length >= 8) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          showToast('success', 'Success', 'Logging in!')
+          setTimeout(() => {
+            router.push("/profilesetup")
+          }, 1500);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (errorCode === 'auth/email-already-in-use') {
+            showToast('success', 'Email is already registered!', 'Please log in instead!')
+          }else{
+            showToast('error', errorMessage.slice(10, 15), errorCode)
+          }
+        });
+    } else if (emailRegex.test(email) === false && password.length >= 8) {
+      showToast('error', 'Error', 'Invalid email syntax')
+    } else if (emailRegex.test(email) && password.length <= 8) {
+      showToast('error', 'Error', 'Password must be at least 8 characters long')
+    } else {
+      showToast('error', 'Error', 'Invalid email syntax and password length.')
     }
-  };
-  const registerUser = () =>{
-    router.push("/city")
   }
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-        <FontAwesome name="arrow-left" size={24} color="#fff" />
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>Sign up via email address</Text>
+      <Text style={styles.subtitle}>We’ll mail a link to verify your account</Text>
 
-      <Text style={styles.header}>Confirm your information</Text>
-
-      <View style={styles.profileContainer}>
-        {image ? <Image
-          source={{ uri: image }}
-          style={styles.profileImage}
-        /> : <Image
-        source={{ uri: 'https://instagram.fkhi22-1.fna.fbcdn.net/v/t51.2885-19/458925334_1022503086235063_7228415357725335161_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fkhi22-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=Ps5jUMZ6JS0Q7kNvgEpF_Bg&_nc_gid=ee7004b0d40e4e999bf80cf042311c5c&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AYDMCkcE2bFA-U7vET_cR-Kb46uQP99zxOgK2_pVv89EAg&oe=672C6994&_nc_sid=7d3ac5' }}
-        style={styles.profileImage}
-      />}
-        <TouchableOpacity style={styles.addIcon} onPress={pickImage}>
-          <FontAwesome name="plus" size={16} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput style={styles.input} value="Shahzaib Ali" />
-      </View>
-
-      <View style={{ ...styles.disabledInputContainer, borderRadius: 10 }}>
-        <Text style={{ ...styles.label, color: '#8e8e93' }}>Email</Text>
-        <TextInput
-          style={{ ...styles.input, color: '#8e8e93' }}
-          value="jamroshahzaibali69@gmail.com"
-          editable={false}
-        />
-      </View>
-
-      <View style={{ ...styles.inputContainer, flexDirection: 'row', alignItems: 'center', }}>
+      <View style={{ ...styles.inputContainer, marginBottom: 10 }}>
         <TouchableOpacity style={styles.countryPicker}>
-          <Text style={styles.flag}>🇵🇰</Text>
-          <AntDesign name="caretdown" size={10} color="#fff" />
+          <Text style={styles.flag}>✉️</Text>
         </TouchableOpacity>
 
         <TextInput
-          style={{
-            ...styles.input,
-            flex: 1,
-            color: '#ffffff',
-            paddingVertical: 5,
-          }}
-          placeholder="Enter phone number"
+
+          style={styles.input}
+          placeholder="Enter your email"
           placeholderTextColor="#888"
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TouchableOpacity style={styles.countryPicker}>
+          <Text style={styles.flag}>🔑</Text>
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your password"
+          placeholderTextColor="#888"
+          keyboardType="default"
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
-      <TouchableOpacity style={styles.nextButton} onPress={registerUser}>
+      <TouchableOpacity style={styles.nextButton} onPress={continuewithEmail}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
-    </View>
+
+      <Text style={styles.orText}>Or login with</Text>
+
+      <TouchableOpacity style={styles.googleButton} onPress={continuewithGoogle}>
+        <Image
+          source={{ uri: 'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA' }}
+          style={{ width: 20, height: 20, marginRight: 8 }}
+        />
+        <Text style={styles.googleButtonText}>Continue with Google</Text>
+      </TouchableOpacity>
+
+      <Text onPress={() => router.push("/login")} style={{...styles.orText,marginTop:7,textDecorationLine:'underline'}}>Already a user? Signin Now!</Text>
+
+      <Text style={styles.footerText}>
+        Joining our app means you agree with our <Text style={styles.linkText}>Terms of Use</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
+      </Text>
+      <Toast config={toastConfig} />
+    </SafeAreaView>
   );
 }
 
@@ -116,31 +181,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1c1f24',
-    padding: 20,
-    paddingTop: 80,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 30,
-  },
-  header: {
-    fontSize: 24,
+  title: {
+    fontSize: 23,
     // fontWeight: 'bold',
     fontFamily: 'OpenSans_700Bold',
-    color: '#fff',
-    marginBottom: 25,
-    textAlign: 'left',
+    color: '#ffffff',
+    marginBottom: 8,
+    textAlign: 'center',
   },
-  profileContainer: {
+  subtitle: {
+    fontSize: 16,
+    color: '#70737c',
+    marginBottom: 20,
+    textAlign: 'center',
+    fontFamily: 'OpenSans_400Regular'
+  },
+  inputContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 35,
-    width: 120,
-    marginHorizontal: 'auto'
-  },
-  profileImage: {
-    width: 140,
-    height: 140,
-    borderRadius: 100,
+    backgroundColor: '#2a2d33',
+    borderRadius: 8,
+    marginBottom: 20,
+    width: '100%',
+    paddingHorizontal: 10,
   },
   countryPicker: {
     flexDirection: 'row',
@@ -148,73 +215,56 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingLeft: 5,
   },
-  addIcon: {
-    position: 'absolute',
-    bottom: 5,
-    right: 0,
-    backgroundColor: '#39d353',
-    width: 28,
-    height: 28,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputContainer: {
-    width: '100%',
-    marginBottom: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    backgroundColor: '#2a2d33',
-    borderRadius: 8,
-  },
-  label: {
-    color: '#8e8e93',
-    fontSize: 15,
-    fontFamily: 'OpenSans_400Regular'
-  },
-  input: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'OpenSans_400Regular'
-  },
-  disabledInputContainer: {
-    backgroundColor: '#495563',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 10,
-    width: '100%',
-    marginBottom: 20,
-  },
-  countryContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#2c2c2e',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
   flag: {
     fontSize: 20,
     marginRight: 5,
   },
-  countryCode: {
-    color: '#fff',
-    marginLeft: 5,
+  input: {
+    flex: 1,
+    color: '#ffffff',
+    paddingVertical: 10,
+    fontSize: 16,
+    fontFamily: 'OpenSans_400Regular'
   },
   nextButton: {
     backgroundColor: '#9ed90d',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
+    borderRadius: 8,
+    paddingVertical: 12,
     alignItems: 'center',
     width: '100%',
+    marginBottom: 5,
   },
   nextButtonText: {
-    color: 'black',
-    fontSize: 18,
-    fontWeight: 'semibold',
+    color: '#1c1f24',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  orText: {
+    color: '#70737c',
+    fontSize: 14,
+    marginVertical: 15,
+  },
+  googleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2a2d33',
+    borderRadius: 8,
+    paddingVertical: 12,
+    width: '100%',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  googleButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#70737c',
+    textAlign: 'center',
+  },
+  linkText: {
+    color: '#77dd76',
+    textDecorationLine: 'underline',
   },
 });

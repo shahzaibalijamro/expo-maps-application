@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/config/firebase/config.js"
 import {
   View,
@@ -82,11 +82,15 @@ export default function JoinScreen() {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
         const user = result.user;
+        console.log(user);
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         const email = error.customData.email;
         const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log(errorCode)
+        console.log(errorMessage)
+        
       });
     // router.navigate("/register")
   }
@@ -94,7 +98,21 @@ export default function JoinScreen() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     console.log(emailRegex.test(email))
     if (emailRegex.test(email) && password.length >= 8) {
-      
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+          showToast('success', 'Welcome', 'Logging in!')
+          setTimeout(() => {
+            router.push("/profilesetup")
+          }, 1500);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+        });
       // createUserWithEmailAndPassword(auth, email, password)
       //   .then((userCredential) => {
       //     showToast('success', 'Success', 'Logging in!')
@@ -124,7 +142,7 @@ export default function JoinScreen() {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Join us via email address</Text>
+      <Text style={styles.title}>Sign in via email address</Text>
       <Text style={styles.subtitle}>We’ll mail a link to verify your account</Text>
 
       <View style={{ ...styles.inputContainer, marginBottom: 10 }}>
@@ -163,7 +181,7 @@ export default function JoinScreen() {
 
       <Text style={styles.orText}>Or login with</Text>
 
-      <TouchableOpacity style={styles.googleButton} onPress={continuewithGoogle}>
+      <TouchableOpacity style={{...styles.googleButton,marginBottom:10}} onPress={continuewithGoogle}>
         <Image
           source={{ uri: 'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA' }}
           style={{ width: 20, height: 20, marginRight: 8 }}
@@ -171,6 +189,7 @@ export default function JoinScreen() {
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
 
+      <Text onPress={() => router.push("/register")} style={{...styles.orText,marginTop:7,textDecorationLine:'underline'}}>New user? Signup Now!</Text>
 
       <Text style={styles.footerText}>
         Joining our app means you agree with our <Text style={styles.linkText}>Terms of Use</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
