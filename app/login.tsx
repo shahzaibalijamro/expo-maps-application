@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/config/firebase/config.js"
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, provider } from "@/config/firebase/config.js"
 import {
   View,
   Text,
@@ -22,6 +22,38 @@ import { router } from 'expo-router';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
+  const toastConfig = {
+    success: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: '#9ed90d', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: '#FF0000', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+  };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fontsLoaded] = useFonts({
@@ -29,11 +61,11 @@ export default function JoinScreen() {
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
-  const showToast = () => {
+  const showToast = (type: string, heading: string, paragraph: string) => {
     Toast.show({
-      type: 'success',
-      text1: 'Hello',
-      text2: 'This is some something 👋'
+      type: type,
+      text1: heading,
+      text2: paragraph
     });
   }
   useEffect(() => {
@@ -45,22 +77,49 @@ export default function JoinScreen() {
     return null;
   }
   const continuewithGoogle = () => {
-    router.navigate("/register")
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential?.accessToken;
+        const user = result.user;
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+    // router.navigate("/register")
   }
   const continuewithEmail = () => {
-    showToast()
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // console.log(emailRegex.test(email))
-    // emailRegex.test(email) === false ? Alert.alert("Invalid email!") : ;
-    // createUserWithEmailAndPassword(auth, email, password)
-    //   .then((userCredential) => {
-    //     router.push("/register")
-    //   })
-    //   .catch((error) => {
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     Alert.alert(errorMessage)
-    //   });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log(emailRegex.test(email))
+    if (emailRegex.test(email) && password.length >= 8) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          showToast('success', 'Success', 'Logging in!')
+          setTimeout(() => {
+            router.push("/register")
+          }, 1500);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (errorCode === 'auth/email-already-in-use') {
+            showToast('success', 'Email is already registered!', 'Please log in instead!')
+            // setTimeout(() => {
+            //   router.push("/register")
+            // }, 1500);
+          }else{
+            showToast('error', errorMessage.slice(10, 15), errorCode)
+          }
+        });
+    } else if (emailRegex.test(email) === false && password.length >= 8) {
+      showToast('error', 'Error', 'Invalid email syntax')
+    } else if (emailRegex.test(email) && password.length <= 8) {
+      showToast('error', 'Error', 'Password must be at least 8 characters long')
+    } else {
+      showToast('error', 'Error', 'Invalid email syntax and password length.')
+    }
   }
   return (
     <SafeAreaView style={styles.container}>
@@ -73,7 +132,7 @@ export default function JoinScreen() {
         </TouchableOpacity>
 
         <TextInput
-          
+
           style={styles.input}
           placeholder="Enter your email"
           placeholderTextColor="#888"
@@ -115,7 +174,7 @@ export default function JoinScreen() {
       <Text style={styles.footerText}>
         Joining our app means you agree with our <Text style={styles.linkText}>Terms of Use</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
       </Text>
-      <Toast />
+      <Toast config={toastConfig} />
     </SafeAreaView>
   );
 }
