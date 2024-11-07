@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
 import { auth, provider } from "@/config/firebase/config.js"
 import {
   View,
@@ -77,19 +77,30 @@ export default function JoinScreen() {
     return null;
   }
   const continuewithGoogle = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
+    signInWithRedirect(auth, provider);
+    getRedirectResult(auth)
+      .then((result:any) => {
+        // This gives you a Google Access Token. You can use it to access Google APIs.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential?.accessToken;
+
+        // The signed-in user info.
         const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
         console.log(user);
+        
       }).catch((error) => {
+        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
+        // The email of the user's account used.
         const email = error.customData.email;
+        // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log(errorCode)
-        console.log(errorMessage)
+        // ...
+        console.log(errorMessage);
+        
       });
     // router.navigate("/register")
   }
@@ -180,7 +191,7 @@ export default function JoinScreen() {
 
       <Text style={styles.orText}>Or login with</Text>
 
-      <TouchableOpacity style={{...styles.googleButton,marginBottom:10}} onPress={continuewithGoogle}>
+      <TouchableOpacity style={{ ...styles.googleButton, marginBottom: 10 }} onPress={continuewithGoogle}>
         <Image
           source={{ uri: 'https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA' }}
           style={{ width: 20, height: 20, marginRight: 8 }}
@@ -188,7 +199,7 @@ export default function JoinScreen() {
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
 
-      <Text onPress={() => router.push("/register")} style={{...styles.orText,marginTop:7,textDecorationLine:'underline'}}>New user? Signup Now!</Text>
+      <Text onPress={() => router.push("/register")} style={{ ...styles.orText, marginTop: 7, textDecorationLine: 'underline' }}>New user? Signup Now!</Text>
 
       <Text style={styles.footerText}>
         Joining our app means you agree with our <Text style={styles.linkText}>Terms of Use</Text> and <Text style={styles.linkText}>Privacy Policy</Text>

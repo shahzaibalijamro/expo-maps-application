@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { auth, provider } from "@/config/firebase/config.js"
+import { auth } from "@/config/firebase/config.js"
 import {
   View,
   Text,
@@ -77,17 +77,6 @@ export default function JoinScreen() {
     return null;
   }
   const continuewithGoogle = () => {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
-        const user = result.user;
-      }).catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-      });
     // router.navigate("/register")
   }
   const continuewithEmail = () => {
