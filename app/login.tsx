@@ -90,7 +90,6 @@ export default function JoinScreen() {
         const credential = GoogleAuthProvider.credentialFromError(error);
         console.log(errorCode)
         console.log(errorMessage)
-        
       });
     // router.navigate("/register")
   }
