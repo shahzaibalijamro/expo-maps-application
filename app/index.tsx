@@ -6,6 +6,7 @@ import * as Location from 'expo-location';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 interface LocationData {
   latitude: number;
   longitude: number;
@@ -208,6 +209,7 @@ export default function Index() {
           </MapView>
         </SafeAreaView>
       )}
+      <Toast />
     </SafeAreaView>
   );
 }

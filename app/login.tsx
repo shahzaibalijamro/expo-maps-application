@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/firebase/config.js"
 import {
   View,
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView, 
-  Image } from 'react-native';
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Alert
+} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   OpenSans_400Regular,
@@ -15,14 +19,23 @@ import {
 } from '@expo-google-fonts/open-sans';
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
+  const showToast = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Hello',
+      text2: 'This is some something 👋'
+    });
+  }
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -31,33 +44,60 @@ export default function JoinScreen() {
   if (!fontsLoaded) {
     return null;
   }
-  const continuewithGoogle = () =>{
+  const continuewithGoogle = () => {
     router.navigate("/register")
   }
-  const continuewithPhone = () =>{
-    router.push("/register")
+  const continuewithEmail = () => {
+    showToast()
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // console.log(emailRegex.test(email))
+    // emailRegex.test(email) === false ? Alert.alert("Invalid email!") : ;
+    // createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     router.push("/register")
+    //   })
+    //   .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     Alert.alert(errorMessage)
+    //   });
   }
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Join us via email address</Text>
-      <Text style={styles.subtitle}>We’ll mail a code to verify your phone</Text>
+      <Text style={styles.subtitle}>We’ll mail a link to verify your account</Text>
 
-      <View style={styles.inputContainer}>
+      <View style={{ ...styles.inputContainer, marginBottom: 10 }}>
         <TouchableOpacity style={styles.countryPicker}>
           <Text style={styles.flag}>✉️</Text>
         </TouchableOpacity>
 
         <TextInput
+          
           style={styles.input}
           placeholder="Enter your email"
           placeholderTextColor="#888"
           keyboardType="email-address"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+          value={email}
+          onChangeText={setEmail}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <TouchableOpacity style={styles.countryPicker}>
+          <Text style={styles.flag}>🔑</Text>
+        </TouchableOpacity>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your password"
+          placeholderTextColor="#888"
+          keyboardType="default"
+          value={password}
+          onChangeText={setPassword}
         />
       </View>
 
-      <TouchableOpacity style={styles.nextButton} onPress={continuewithPhone}>
+      <TouchableOpacity style={styles.nextButton} onPress={continuewithEmail}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
 
@@ -75,6 +115,7 @@ export default function JoinScreen() {
       <Text style={styles.footerText}>
         Joining our app means you agree with our <Text style={styles.linkText}>Terms of Use</Text> and <Text style={styles.linkText}>Privacy Policy</Text>
       </Text>
+      <Toast />
     </SafeAreaView>
   );
 }
