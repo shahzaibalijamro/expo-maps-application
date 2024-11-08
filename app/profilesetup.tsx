@@ -10,9 +10,18 @@ import {
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { auth, db } from '@/config/firebase/config';
 SplashScreen.preventAutoHideAsync();
+interface User {
+  email: string,
+  docId : string,
+  uid: string
+}
 export default function ConfirmInfoScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userData,setUserData] = useState<User | null>(null)
   const [image, setImage] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
@@ -20,14 +29,16 @@ export default function ConfirmInfoScreen() {
     OpenSans_700Bold,
   });
   useEffect(() => {
-    const prepareApp = async () => {
-      if (fontsLoaded) {
-        await SplashScreen.hideAsync();
-      }
+    const getUser = async () => {
+      const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setUserData({...(doc.data() as User), docId : doc.id})
+      });
     };
-    prepareApp();
-  }, [fontsLoaded]);
-
+    getUser();
+  }, []);
+  console.log(userData);
   if (!fontsLoaded) {
     return null;
   }
@@ -46,7 +57,7 @@ export default function ConfirmInfoScreen() {
       setImage(result.assets[0].uri);
     }
   };
-  const registerUser = () =>{
+  const registerUser = () => {
     router.push("/city")
   }
   return (
@@ -62,9 +73,9 @@ export default function ConfirmInfoScreen() {
           source={{ uri: image }}
           style={styles.profileImage}
         /> : <Image
-        source={{ uri: 'https://instagram.fkhi22-1.fna.fbcdn.net/v/t51.2885-19/458925334_1022503086235063_7228415357725335161_n.jpg?stp=dst-jpg_s150x150&_nc_ht=instagram.fkhi22-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=Ps5jUMZ6JS0Q7kNvgEpF_Bg&_nc_gid=ee7004b0d40e4e999bf80cf042311c5c&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AYDMCkcE2bFA-U7vET_cR-Kb46uQP99zxOgK2_pVv89EAg&oe=672C6994&_nc_sid=7d3ac5' }}
-        style={styles.profileImage}
-      />}
+          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2TgOv9CMmsUzYKCcLGWPvqcpUk6HXp2mnww&s' }}
+          style={styles.profileImage}
+        />}
         <TouchableOpacity style={styles.addIcon} onPress={pickImage}>
           <FontAwesome name="plus" size={16} color="#fff" />
         </TouchableOpacity>
@@ -72,14 +83,16 @@ export default function ConfirmInfoScreen() {
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Name</Text>
-        <TextInput style={styles.input} value="Shahzaib Ali" />
+        <TextInput style={styles.input} placeholder="Enter your name"
+          placeholderTextColor="#888" value={userName}
+          onChangeText={setUserName} />
       </View>
 
       <View style={{ ...styles.disabledInputContainer, borderRadius: 10 }}>
         <Text style={{ ...styles.label, color: '#8e8e93' }}>Email</Text>
         <TextInput
           style={{ ...styles.input, color: '#8e8e93' }}
-          value="jamroshahzaibali69@gmail.com"
+          value={userData ? userData.email : ''}
           editable={false}
         />
       </View>
@@ -170,13 +183,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   label: {
-    color: '#8e8e93',
+    color: '#bbbbbe',
     fontSize: 15,
-    fontFamily: 'OpenSans_400Regular'
+    fontFamily: 'OpenSans_600SemiBold'
   },
   input: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'OpenSans_400Regular'
   },
   disabledInputContainer: {

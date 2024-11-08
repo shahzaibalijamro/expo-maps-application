@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
-import { auth } from "@/config/firebase/config.js"
+import { auth, db } from "@/config/firebase/config.js"
 import {
   View,
   Text,
@@ -21,18 +21,21 @@ import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { addDoc, collection } from 'firebase/firestore';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
-  const checkUserStatus = async () =>{
-    const value = await AsyncStorage.getItem('yetToSetup');
-    if (value) {
-      showToast('success','User already logged in!','Redirecting to the confirmation page!')
-      // setTimeout(() => {
-      //   router.push("/profilesetup")
-      // }, 1500);
+  useEffect(()=>{
+    const checkUserStatus = async () =>{
+      const value = await AsyncStorage.getItem('yetToSetup');
+      if (value) {
+        showToast('success','User already logged in!','Redirecting to the confirmation page!')
+        setTimeout(() => {
+          router.push("/profilesetup")
+        }, 1500);
+      }
     }
-  }
-  checkUserStatus()
+    checkUserStatus()
+  },[])
   const toastConfig = {
     success: (props: any) => (
       <BaseToast
@@ -107,6 +110,14 @@ export default function JoinScreen() {
             }
           };
           storeData();
+          const addUser = async () => {
+            const docRef = await addDoc(collection(db, "users"), {
+              email: email,
+              uid: user.uid
+            });
+            console.log("Document written with ID: ", docRef.id);
+          }
+          addUser()
           setTimeout(() => {
             router.push("/profilesetup")
           }, 1500);
