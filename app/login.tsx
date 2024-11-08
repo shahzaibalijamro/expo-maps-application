@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, getRedirectResult, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect } from "firebase/auth";
-import { auth, provider } from "@/config/firebase/config.js"
+import { auth } from "@/config/firebase/config.js"
 import {
   View,
   Text,
@@ -20,8 +20,19 @@ import {
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
+  const checkUserStatus = async () =>{
+    const value = await AsyncStorage.getItem('yetToSetup');
+    if (value) {
+      showToast('success','User already logged in!','Redirecting to the confirmation page!')
+      // setTimeout(() => {
+      //   router.push("/profilesetup")
+      // }, 1500);
+    }
+  }
+  checkUserStatus()
   const toastConfig = {
     success: (props: any) => (
       <BaseToast
@@ -77,31 +88,6 @@ export default function JoinScreen() {
     return null;
   }
   const continuewithGoogle = () => {
-    signInWithRedirect(auth, provider);
-    getRedirectResult(auth)
-      .then((result:any) => {
-        // This gives you a Google Access Token. You can use it to access Google APIs.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential?.accessToken;
-
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-        console.log(user);
-        
-      }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-        console.log(errorMessage);
-        
-      });
     // router.navigate("/register")
   }
   const continuewithEmail = () => {
@@ -113,6 +99,14 @@ export default function JoinScreen() {
           const user = userCredential.user;
           console.log(user);
           showToast('success', 'Welcome', 'Logging in!')
+          const storeData = async () => {
+            try {
+              await AsyncStorage.setItem('yetToSetup', 'true');
+            } catch (e) {
+              console.log(e);
+            }
+          };
+          storeData();
           setTimeout(() => {
             router.push("/profilesetup")
           }, 1500);
@@ -123,25 +117,6 @@ export default function JoinScreen() {
           console.log(errorCode);
           console.log(errorMessage);
         });
-      // createUserWithEmailAndPassword(auth, email, password)
-      //   .then((userCredential) => {
-      //     showToast('success', 'Success', 'Logging in!')
-      //     setTimeout(() => {
-      //       router.push("/register")
-      //     }, 1500);
-      //   })
-      //   .catch((error) => {
-      //     const errorCode = error.code;
-      //     const errorMessage = error.message;
-      //     if (errorCode === 'auth/email-already-in-use') {
-      //       showToast('success', 'Email is already registered!', 'Please log in instead!')
-      //       // setTimeout(() => {
-      //       //   router.push("/register")
-      //       // }, 1500);
-      //     }else{
-      //       showToast('error', errorMessage.slice(10, 15), errorCode)
-      //     }
-      //   });
     } else if (emailRegex.test(email) === false && password.length >= 8) {
       showToast('error', 'Error', 'Invalid email syntax')
     } else if (emailRegex.test(email) && password.length <= 8) {

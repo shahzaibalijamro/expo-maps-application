@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth";
+import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const firebaseConfig = {
   apiKey: "AIzaSyDJY0aI-Uz83sajmczsVqNrUhcRsAtnF4Y",
   authDomain: "indrive-app-790b8.firebaseapp.com",
@@ -9,7 +9,7 @@ const firebaseConfig = {
   messagingSenderId: "742862640651",
   appId: "1:742862640651:web:c448b4b0f9b34ea271990e"
 };
-
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage)
+});
