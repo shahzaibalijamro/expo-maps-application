@@ -113,7 +113,7 @@ export default function JoinScreen() {
           const addUser = async () => {
             const docRef = await addDoc(collection(db, "users"), {
               email: email,
-              uid: user.uid
+              uid: user.uid,
             });
             console.log("Document written with ID: ", docRef.id);
           }

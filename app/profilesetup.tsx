@@ -10,55 +10,154 @@ import {
 import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 SplashScreen.preventAutoHideAsync();
 interface User {
   email: string,
-  docId : string,
+  docId: string,
   uid: string
 }
 export default function ConfirmInfoScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
-  const [userData,setUserData] = useState<User | null>(null)
+  const [email,setEmail] = useState<string | undefined>('')
+  const [userData, setUserData] = useState<User | null>(null)
   const [image, setImage] = useState<string | null>(null);
+  const toastConfig = {
+    success: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: '#9ed90d', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: '#FF0000', borderLeftWidth: 10, width: '90%', marginTop: 15 }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 16,
+          fontWeight: '400'
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: '400'
+        }}
+      />
+    ),
+  };
+  const showToast = (type: string, heading: string, paragraph: string) => {
+    Toast.show({
+      type: type,
+      text1: heading,
+      text2: paragraph
+    });
+  }
   const [fontsLoaded] = useFonts({
     OpenSans_400Regular,
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
   useEffect(() => {
-    const getUser = async () => {
-      const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUserData({...(doc.data() as User), docId : doc.id})
-      });
+    const getData = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('user-profile');
+        if (jsonValue != null) {
+          const userProfile = JSON.parse(jsonValue);
+          setPhoneNumber(userProfile.phoneNumber)
+          setUserName(userProfile.name)
+          setEmail(userProfile.email)
+          setImage(userProfile.pfp)
+        }
+        else {
+          const getUser = async () => {
+            const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              setUserData({ ...(doc.data() as User), docId: doc.id })
+            });
+          };
+          setEmail(userData?.email)
+          const loadImage = async () => {
+            const savedImage = await AsyncStorage.getItem('profileImage');
+            if (savedImage) {
+              setImage(savedImage);
+            }
+          };
+          loadImage();
+          getUser();
+        }
+      } catch (e) {
+        // error reading value
+      }
     };
-    getUser();
+    getData();
   }, []);
-  console.log(userData);
-  if (!fontsLoaded) {
-    return null;
-  }
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      await AsyncStorage.setItem('profileImage', result.assets[0].uri);
     }
   };
-  const registerUser = () => {
-    router.push("/city")
+  const storeData = async (value: {}) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('user-profile', jsonValue);
+    } catch (e) {
+      console.error("Error saving user data:", e);
+    }
+  };
+  const registerUser = async () => {
+    if (image) {
+      try {
+        const confirmUserRef = doc(db, "users", userData?.docId);
+        await updateDoc(confirmUserRef, {
+          name: userName,
+          email: userData?.email,
+          phoneNumber: phoneNumber,
+          docId: userData?.docId,
+          pfp: image
+        });
+        storeData({
+          name: userName,
+          email: userData?.email,
+          phoneNumber: phoneNumber,
+          docId: userData?.docId,
+          pfp: image
+        })
+        router.push("/city")
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      showToast('error', 'Error', 'Profile picture not selected')
+    }
+  }
+  if (!fontsLoaded) {
+    return null;
   }
   return (
     <View style={styles.container}>
@@ -92,7 +191,7 @@ export default function ConfirmInfoScreen() {
         <Text style={{ ...styles.label, color: '#8e8e93' }}>Email</Text>
         <TextInput
           style={{ ...styles.input, color: '#8e8e93' }}
-          value={userData ? userData.email : ''}
+          value={email}
           editable={false}
         />
       </View>
@@ -121,6 +220,7 @@ export default function ConfirmInfoScreen() {
       <TouchableOpacity style={styles.nextButton} onPress={registerUser}>
         <Text style={styles.nextButtonText}>Next</Text>
       </TouchableOpacity>
+      <Toast config={toastConfig} />
     </View>
   );
 }
