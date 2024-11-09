@@ -3,10 +3,12 @@ import { Alert, FlatList, Image, Platform, SafeAreaView, StatusBar, StyleSheet, 
 import MapView, { Callout, Marker, Polyline } from "react-native-maps";
 import polyline from 'polyline-encoded';
 import * as Location from 'expo-location';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
+import { Entypo } from "@expo/vector-icons";
 interface LocationData {
   latitude: number;
   longitude: number;
@@ -45,7 +47,7 @@ export default function Index() {
         const value = await AsyncStorage.getItem('newUser');
         if (value === null) {
           router.replace("/login")
-        }else{
+        } else {
           (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
@@ -63,7 +65,7 @@ export default function Index() {
               });
             } catch (error) {
               Alert.alert('Could not fetch location');
-            }finally{
+            } finally {
               setAppIsReady(true);
             }
           })();
@@ -146,7 +148,7 @@ export default function Index() {
       {location && (
         <SafeAreaView style={styles.mapContainer}>
           <TextInput
-            style={[styles.input, Platform.OS === 'android' && { top: StatusBar.currentHeight ?? 20 }]}
+            style={[styles.input, Platform.OS === 'android' && { bottom: 20 }]}
             placeholder="Search location"
             value={search}
             onSubmitEditing={getPlaces}
@@ -154,6 +156,16 @@ export default function Index() {
             onChangeText={setSearch}
             keyboardType="default"
           />
+          <View style={{position:'absolute',top: 20,flexDirection: 'row',justifyContent: 'space-between',width: '100%',zIndex:20}}>
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute' ,width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10,zIndex:20,marginTop: 20, marginBottom: 10 , left: 20 }}>
+            <FontAwesome6 name="bars" size={26} color="white" />
+              {/* <Entypo name="google-" size={30} color="black" /> */}
+            </TouchableOpacity>
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute' ,width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10,zIndex:20,marginTop: 20, marginBottom: 10 , right: 20 }}>
+            <FontAwesome6 name="share" size={26} color="white" />
+              {/* <Entypo name="google-" size={30} color="black" /> */}
+            </TouchableOpacity>
+          </View>
           {searchedPlaceRes.length > 0 && (
             <FlatList
               data={searchedPlaceRes}
@@ -192,7 +204,7 @@ export default function Index() {
               icon={require('../assets/images/location-80.png')}
             >
               <Callout>
-                <View style={{width: 100,height:85, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ width: 100, height: 85, justifyContent: 'center', alignItems: 'center' }}>
                   <Text style={{ fontWeight: "500" }}>Your</Text>
                   <Text style={{ fontWeight: "500" }}>Current</Text>
                   <Text style={{ fontWeight: "500" }}>Location</Text>
@@ -222,7 +234,6 @@ const styles = StyleSheet.create({
   input: {
     position: 'absolute',
     marginTop: 10,
-    top: 20,
     left: 15,
     right: 15,
     zIndex: 1,
@@ -250,3 +261,159 @@ const styles = StyleSheet.create({
   itemText1: { paddingBottom: 5, fontWeight: "600", fontSize: 15 },
   itemText2: { fontWeight: "400", fontSize: 12 },
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React from 'react';
+// import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+// import { FontAwesome } from '@expo/vector-icons';
+
+// const MapBottomLayout = () => {
+//   return (
+//     <View style={styles.container}>
+//       {/* Ride options */}
+//       <View style={styles.rideOptions}>
+//         <TouchableOpacity style={styles.option}>
+//           <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
+//           <Text style={styles.optionText}>Moto</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.option}>
+//           <FontAwesome name="car" size={24} color="black" />
+//           <Text style={styles.optionText}>Ride Mini</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.option}>
+//           <FontAwesome name="snowflake-o" size={24} color="black" />
+//           <Text style={styles.optionText}>Ride A/C</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.option}>
+//           <FontAwesome name="truck" size={24} color="black" />
+//           <Text style={styles.optionText}>Auto</Text>
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.option}>
+//           <FontAwesome name="suitcase" size={24} color="black" />
+//           <Text style={styles.optionText}>City to city</Text>
+//         </TouchableOpacity>
+//       </View>
+
+//       {/* Location and fare input */}
+//       <View style={styles.locationFareInput}>
+//         <View style={styles.locationRow}>
+//           <Text style={styles.locationText}>KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
+//         </View>
+//         <TextInput style={styles.input} placeholder="To" />
+//         <TextInput style={styles.input} placeholder="PKR Offer your fare" keyboardType="numeric" />
+//       </View>
+
+//       {/* Find a driver button */}
+//       <TouchableOpacity style={styles.findDriverButton}>
+//         <Text style={styles.buttonText}>Find a driver</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     padding: 16,
+//     backgroundColor: '#2a2d2e',
+//     borderTopLeftRadius: 12,
+//     borderTopRightRadius: 12,
+//   },
+//   rideOptions: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-around',
+//     marginBottom: 16,
+//   },
+//   option: {
+//     alignItems: 'center',
+//   },
+//   optionText: {
+//     color: 'white',
+//     fontSize: 12,
+//     marginTop: 4,
+//   },
+//   locationFareInput: {
+//     backgroundColor: '#353839',
+//     padding: 12,
+//     borderRadius: 8,
+//     marginBottom: 16,
+//   },
+//   locationRow: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginBottom: 8,
+//   },
+//   locationText: {
+//     color: 'white',
+//     fontSize: 14,
+//   },
+//   input: {
+//     backgroundColor: '#2a2d2e',
+//     padding: 10,
+//     borderRadius: 6,
+//     color: 'white',
+//     marginTop: 8,
+//   },
+//   findDriverButton: {
+//     backgroundColor: '#1dbf73',
+//     paddingVertical: 12,
+//     borderRadius: 6,
+//     alignItems: 'center',
+//   },
+//   buttonText: {
+//     color: 'white',
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//   },
+// });
+
+// export default MapBottomLayout;
