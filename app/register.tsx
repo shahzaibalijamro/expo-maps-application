@@ -85,9 +85,9 @@ export default function JoinScreen() {
     if (emailRegex.test(email) && password.length >= 8) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          showToast('success', 'Success', 'Logging in!')
+          showToast('success', 'User registered!', 'Redirecting to the login page!')
           setTimeout(() => {
-            router.push("/profilesetup")
+            router.push("/login")
           }, 1500);
         })
         .catch((error) => {

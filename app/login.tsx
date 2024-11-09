@@ -24,18 +24,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addDoc, collection } from 'firebase/firestore';
 SplashScreen.preventAutoHideAsync();
 export default function JoinScreen() {
-  useEffect(()=>{
-    const checkUserStatus = async () =>{
-      const value = await AsyncStorage.getItem('yetToSetup');
-      if (value) {
-        showToast('success','User already logged in!','Redirecting to the confirmation page!')
-        setTimeout(() => {
-          router.push("/profilesetup")
-        }, 1500);
-      }
-    }
-    checkUserStatus()
-  },[])
   const toastConfig = {
     success: (props: any) => (
       <BaseToast
@@ -68,13 +56,6 @@ export default function JoinScreen() {
       />
     ),
   };
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fontsLoaded] = useFonts({
-    OpenSans_400Regular,
-    OpenSans_600SemiBold,
-    OpenSans_700Bold,
-  });
   const showToast = (type: string, heading: string, paragraph: string) => {
     Toast.show({
       type: type,
@@ -82,6 +63,25 @@ export default function JoinScreen() {
       text2: paragraph
     });
   }
+  useEffect(()=>{
+    const checkUserStatus = async () =>{
+      const value = await AsyncStorage.getItem('yetToSetup');
+      if (value) {
+        showToast('success','User already logged in!','Redirecting to the confirmation page!')
+        setTimeout(() => {
+          router.push("/profilesetup")
+        }, 1500);
+      }
+    }
+    checkUserStatus()
+  },[])
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fontsLoaded] = useFonts({
+    OpenSans_400Regular,
+    OpenSans_600SemiBold,
+    OpenSans_700Bold,
+  });
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -127,6 +127,7 @@ export default function JoinScreen() {
           const errorMessage = error.message;
           console.log(errorCode);
           console.log(errorMessage);
+          showToast('error', 'Error', errorMessage)
         });
     } else if (emailRegex.test(email) === false && password.length >= 8) {
       showToast('error', 'Error', 'Invalid email syntax')

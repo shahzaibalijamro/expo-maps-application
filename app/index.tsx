@@ -42,7 +42,7 @@ export default function Index() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const value = await AsyncStorage.getItem('465');
+        const value = await AsyncStorage.getItem('newUser');
         if (value === null) {
           router.replace("/login")
         }else{

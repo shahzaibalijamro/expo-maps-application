@@ -74,37 +74,46 @@ export default function ConfirmInfoScreen() {
     const getData = async () => {
       try {
         const jsonValue = await AsyncStorage.getItem('user-profile');
-        if (jsonValue != null) {
+        console.log(jsonValue);
+        if (jsonValue) {
           const userProfile = JSON.parse(jsonValue);
           setPhoneNumber(userProfile.phoneNumber)
           setUserName(userProfile.name)
           setEmail(userProfile.email)
           setImage(userProfile.pfp)
-        }
-        else {
-          const getUser = async () => {
-            const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-              setUserData({ ...(doc.data() as User), docId: doc.id })
-            });
-          };
-          setEmail(userData?.email)
-          const loadImage = async () => {
-            const savedImage = await AsyncStorage.getItem('profileImage');
-            if (savedImage) {
-              setImage(savedImage);
-            }
-          };
-          loadImage();
+          
+        }else {
           getUser();
         }
       } catch (e) {
         // error reading value
       }
     };
+    const loadImage = async () => {
+      const savedImage = await AsyncStorage.getItem('profileImage');
+      if (savedImage) {
+        setImage(savedImage);
+      }
+    };
+    loadImage();
+    const getUser = async () => {
+      const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
+      console.log(auth.currentUser?.uid);
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        setUserData({ ...(doc.data() as User), docId: doc.id })
+      });
+    };
+    console.log(userData);
     getData();
   }, []);
+  useEffect(() => {
+    if (userData) {
+      setEmail(userData.email);
+      setUserName(userData.name);
+      setPhoneNumber(userData.phoneNumber)
+    }
+  }, [userData]);
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
