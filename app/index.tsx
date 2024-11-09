@@ -8,7 +8,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
 interface LocationData {
   latitude: number;
   longitude: number;
@@ -156,13 +156,13 @@ export default function Index() {
             onChangeText={setSearch}
             keyboardType="default"
           />
-          <View style={{position:'absolute',top: 20,flexDirection: 'row',justifyContent: 'space-between',width: '100%',zIndex:20}}>
-            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute' ,width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10,zIndex:20,marginTop: 20, marginBottom: 10 , left: 20 }}>
-            <FontAwesome6 name="bars" size={26} color="white" />
+          <View style={{ position: 'absolute', top: 20, flexDirection: 'row', justifyContent: 'space-between', width: '100%', zIndex: 20 }}>
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, left: 20 }}>
+              <FontAwesome6 name="bars" size={26} color="white" />
               {/* <Entypo name="google-" size={30} color="black" /> */}
             </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute' ,width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10,zIndex:20,marginTop: 20, marginBottom: 10 , right: 20 }}>
-            <FontAwesome6 name="share" size={26} color="white" />
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, right: 20 }}>
+              <FontAwesome6 name="share" size={26} color="white" />
               {/* <Entypo name="google-" size={30} color="black" /> */}
             </TouchableOpacity>
           </View>
@@ -219,6 +219,76 @@ export default function Index() {
               />
             )}
           </MapView>
+          <View style={styles.container2}>
+            <View style={styles.rideOptions}>
+              <TouchableOpacity style={styles.option}>
+                <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
+                <Text style={styles.optionText}>Moto</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.option}>
+                <FontAwesome name="car" size={24} color="black" />
+                <Text style={styles.optionText}>Ride Mini</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.option}>
+                <FontAwesome name="snowflake-o" size={24} color="black" />
+                <Text style={styles.optionText}>Ride A/C</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.option}>
+                <FontAwesome name="truck" size={24} color="black" />
+                <Text style={styles.optionText}>Auto</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.option}>
+                <FontAwesome name="suitcase" size={24} color="black" />
+                <Text style={styles.optionText}>City to city</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.locationFareInput}>
+              <View style={styles.locationRow}>
+                <Text style={styles.locationText}>📍 KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
+              </View>
+              <View style={{...styles.inputContainer,backgroundColor: '#323943'}}>
+                <TouchableOpacity style={styles.countryPicker}>
+                  <Text style={styles.flag}>🔍</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles.input2}
+                  placeholder="To"
+                  placeholderTextColor="#888"
+                  keyboardType="default"
+                  // value={}
+                  // onChangeText={}
+                />
+              </View>
+              <View style={{...styles.inputContainer,backgroundColor: '#323943'}}>
+                <TouchableOpacity style={styles.countryPicker}>
+                  <Text style={{...styles.flag,color: '#ffffff'}}>PKR</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles.input2}
+                  placeholder="Offer your fare"
+                  placeholderTextColor="#888"
+                  keyboardType="default"
+                  // value={}
+                  // onChangeText={}
+                />
+              </View>
+              {/* <TextInput style={styles.input2} placeholder="To" placeholderTextColor={'#9fa6b0'}/> */}
+              {/* <TextInput style={styles.input2} placeholder="PKR Offer your fare" keyboardType="numeric" placeholderTextColor={'#9fa6b0'} /> */}
+            </View>
+            <View style={{...styles.buttonContainer,paddingHorizontal: 20}}>
+            <TouchableOpacity>
+                  <Text style={{marginHorizontal: 10,fontSize: 22}}>💵</Text>
+                </TouchableOpacity>
+            <TouchableOpacity style={styles.findDriverButton}>
+              <Text style={styles.buttonText2}>Find a driver</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+                  <Text style={{marginHorizontal: 10,fontSize: 22}}>⚙️</Text>
+                </TouchableOpacity>
+            </View>
+          </View>
         </SafeAreaView>
       )}
       <Toast />
@@ -260,6 +330,92 @@ const styles = StyleSheet.create({
   itemView: { paddingVertical: 10, paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#eee' },
   itemText1: { paddingBottom: 5, fontWeight: "600", fontSize: 15 },
   itemText2: { fontWeight: "400", fontSize: 12 },
+  container2: {
+    position: 'absolute',
+    zIndex: 10,
+    width: '100%',
+    bottom: 0,
+    padding: 16,
+    backgroundColor: '#272c32',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },countryPicker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 5,
+    paddingLeft: 2,
+  },
+  rideOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 16,
+  },
+  option: {
+    alignItems: 'center',
+  },
+  optionText: {
+    color: 'white',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  locationFareInput: {
+    backgroundColor: '#272c32',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 0,
+  },flag: {
+    fontSize: 17,
+    marginRight: 2,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    textAlign: 'center',
+    marginHorizontal: 'auto'
+  },
+  locationText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign : 'center',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2a2d33',
+    borderRadius: 8,
+    marginBottom: 10,
+    width: '100%',
+    paddingHorizontal: 10,
+  },
+  input2: {
+    backgroundColor: '#323943',
+    padding: 10,
+    borderRadius: 6,
+    color: 'white',
+    flex: 1,
+    fontSize: 16,
+    // fontFamily: 'OpenSans_400Regular'
+  },
+  findDriverButton: {
+    backgroundColor: '#9ed90d',
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    width: '70%'
+  },
+  buttonText2: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'semibold',
+  },
+  buttonContainer:{
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent : 'space-between',
+    alignItems: 'center',
+    width: '100%'
+  }
 });
 
 
@@ -319,50 +475,50 @@ const styles = StyleSheet.create({
 
 // const MapBottomLayout = () => {
 //   return (
-//     <View style={styles.container}>
-//       {/* Ride options */}
-//       <View style={styles.rideOptions}>
-//         <TouchableOpacity style={styles.option}>
-//           <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
-//           <Text style={styles.optionText}>Moto</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity style={styles.option}>
-//           <FontAwesome name="car" size={24} color="black" />
-//           <Text style={styles.optionText}>Ride Mini</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity style={styles.option}>
-//           <FontAwesome name="snowflake-o" size={24} color="black" />
-//           <Text style={styles.optionText}>Ride A/C</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity style={styles.option}>
-//           <FontAwesome name="truck" size={24} color="black" />
-//           <Text style={styles.optionText}>Auto</Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity style={styles.option}>
-//           <FontAwesome name="suitcase" size={24} color="black" />
-//           <Text style={styles.optionText}>City to city</Text>
-//         </TouchableOpacity>
-//       </View>
+<View style={styles.container2}>
+  {/* Ride options */}
+  <View style={styles.rideOptions}>
+    <TouchableOpacity style={styles.option}>
+      <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
+      <Text style={styles.optionText}>Moto</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.option}>
+      <FontAwesome name="car" size={24} color="black" />
+      <Text style={styles.optionText}>Ride Mini</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.option}>
+      <FontAwesome name="snowflake-o" size={24} color="black" />
+      <Text style={styles.optionText}>Ride A/C</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.option}>
+      <FontAwesome name="truck" size={24} color="black" />
+      <Text style={styles.optionText}>Auto</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={styles.option}>
+      <FontAwesome name="suitcase" size={24} color="black" />
+      <Text style={styles.optionText}>City to city</Text>
+    </TouchableOpacity>
+  </View>
 
-//       {/* Location and fare input */}
-//       <View style={styles.locationFareInput}>
-//         <View style={styles.locationRow}>
-//           <Text style={styles.locationText}>KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
-//         </View>
-//         <TextInput style={styles.input} placeholder="To" />
-//         <TextInput style={styles.input} placeholder="PKR Offer your fare" keyboardType="numeric" />
-//       </View>
+  {/* Location and fare input */}
+  <View style={styles.locationFareInput}>
+    <View style={styles.locationRow}>
+      <Text style={styles.locationText}>KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
+    </View>
+    <TextInput style={styles.input2} placeholder="To" />
+    <TextInput style={styles.input2} placeholder="PKR Offer your fare" keyboardType="numeric" />
+  </View>
 
-//       {/* Find a driver button */}
-//       <TouchableOpacity style={styles.findDriverButton}>
-//         <Text style={styles.buttonText}>Find a driver</Text>
-//       </TouchableOpacity>
-//     </View>
+  {/* Find a driver button */}
+  <TouchableOpacity style={styles.findDriverButton}>
+    <Text style={styles.buttonText2}>Find a driver</Text>
+  </TouchableOpacity>
+</View>
 //   );
 // };
 
 // const styles = StyleSheet.create({
-//   container: {
+//   container2: {
 //     padding: 16,
 //     backgroundColor: '#2a2d2e',
 //     borderTopLeftRadius: 12,
@@ -396,7 +552,7 @@ const styles = StyleSheet.create({
 //     color: 'white',
 //     fontSize: 14,
 //   },
-//   input: {
+//   input2: {
 //     backgroundColor: '#2a2d2e',
 //     padding: 10,
 //     borderRadius: 6,
@@ -409,7 +565,7 @@ const styles = StyleSheet.create({
 //     borderRadius: 6,
 //     alignItems: 'center',
 //   },
-//   buttonText: {
+//   buttonText2: {
 //     color: 'white',
 //     fontSize: 16,
 //     fontWeight: 'bold',
