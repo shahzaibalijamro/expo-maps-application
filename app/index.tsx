@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Image, Platform, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Image, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MapView, { Callout, Marker, Polyline } from "react-native-maps";
 import polyline from 'polyline-encoded';
 import * as Location from 'expo-location';
@@ -157,12 +157,19 @@ export default function Index() {
             keyboardType="default"
           />
           <View style={{ position: 'absolute', top: 20, flexDirection: 'row', justifyContent: 'space-between', width: '100%', zIndex: 20 }}>
-            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, left: 20 }}>
-              <FontAwesome6 name="bars" size={26} color="white" />
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 50, height: 50, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, left: 20 }}>
+              {/* <FontAwesome6 name="bars" size={26} color="white" /> */}
+              <Image
+                  source={require('@/assets/images/menu.png')}
+                  style={{ width: 26, height: 26 }}
+                />
               {/* <Entypo name="google-" size={30} color="black" /> */}
             </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 45, height: 45, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, right: 20 }}>
-              <FontAwesome6 name="share" size={26} color="white" />
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 50, height: 50, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, right: 20 }}>
+            <Image
+                  source={require('@/assets/images/share (1).png')}
+                  style={{ width: 26, height: 26, padding: 5 }}
+                />
               {/* <Entypo name="google-" size={30} color="black" /> */}
             </TouchableOpacity>
           </View>
@@ -220,49 +227,85 @@ export default function Index() {
             )}
           </MapView>
           <View style={styles.container2}>
-            <View style={styles.rideOptions}>
-              <TouchableOpacity style={styles.option}>
-                <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
+            <ScrollView horizontal={true} contentContainerStyle={styles.rideOptions}>
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+                <Image
+                  source={require('@/assets/images/bycicle (2).png')}
+                  style={{ width: 45, height: 45 }}
+                />
                 <Text style={styles.optionText}>Moto</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <FontAwesome name="car" size={24} color="black" />
-                <Text style={styles.optionText}>Ride Mini</Text>
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+              <Image
+                  source={require('@/assets/images/mini.png')}
+                  style={{ width: 45, height: 45 }}
+                />
+                <Text style={styles.optionText}>Ride mini</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <FontAwesome name="snowflake-o" size={24} color="black" />
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+                <Image
+                  source={require('@/assets/images/air-conditioner (1).png')}
+                  style={{ width: 45, height: 45 }}
+                />
                 <Text style={styles.optionText}>Ride A/C</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <FontAwesome name="truck" size={24} color="black" />
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+              <Image
+                  source={require('@/assets/images/rickshaw.png')}
+                  style={{ width: 42, height: 42 , marginBottom: 3 }}
+                />
                 <Text style={styles.optionText}>Auto</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <FontAwesome name="suitcase" size={24} color="black" />
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+              <Image
+                  source={require('@/assets/images/car (2).png')}
+                  style={{ width: 42, height: 42 , marginBottom: 3 }}
+                />
                 <Text style={styles.optionText}>City to city</Text>
               </TouchableOpacity>
-            </View>
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+              <Image
+                  source={require('@/assets/images/food.png')}
+                  style={{ width: 42, height: 42 , marginBottom: 3 }}
+                />
+                <Text style={styles.optionText}>Courier</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{...styles.option,paddingHorizontal: 12}}>
+              <Image
+                  source={require('@/assets/images/express-delivery.png')}
+                  style={{ width: 42, height: 42 , marginBottom: 3 }}
+                />
+                <Text style={styles.optionText}>Freight</Text>
+              </TouchableOpacity>
+            </ScrollView>
             <View style={styles.locationFareInput}>
               <View style={styles.locationRow}>
-                <Text style={styles.locationText}>📍 KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
+              <Image
+                  source={require('@/assets/images/rec (1).png')}
+                  style={{ width: 16, height: 16,marginRight: 2, marginLeft: 5 ,}}
+                />
+                <Text style={styles.locationText}> KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
               </View>
-              <View style={{...styles.inputContainer,backgroundColor: '#323943'}}>
+              <View style={{ ...styles.inputContainer, backgroundColor: '#323943' }}>
                 <TouchableOpacity style={styles.countryPicker}>
-                  <Text style={styles.flag}>🔍</Text>
+                  <Image
+                  source={require('@/assets/images/search-interface-symbol.png')}
+                  style={{ width: 16, height: 16,marginRight: 2, marginLeft: 5 ,}}
+                />
                 </TouchableOpacity>
 
                 <TextInput
-                  style={styles.input2}
+                  style={{...styles.input2,marginLeft: 8}}
                   placeholder="To"
                   placeholderTextColor="#888"
                   keyboardType="default"
-                  // value={}
-                  // onChangeText={}
+                // value={}
+                // onChangeText={}
                 />
               </View>
-              <View style={{...styles.inputContainer,backgroundColor: '#323943'}}>
+              <View style={{ ...styles.inputContainer, backgroundColor: '#323943' }}>
                 <TouchableOpacity style={styles.countryPicker}>
-                  <Text style={{...styles.flag,color: '#ffffff'}}>PKR</Text>
+                  <Text style={{ ...styles.flag, color: '#ffffff' }}>PKR</Text>
                 </TouchableOpacity>
 
                 <TextInput
@@ -270,23 +313,30 @@ export default function Index() {
                   placeholder="Offer your fare"
                   placeholderTextColor="#888"
                   keyboardType="default"
-                  // value={}
-                  // onChangeText={}
+                // value={}
+                // onChangeText={}
                 />
               </View>
               {/* <TextInput style={styles.input2} placeholder="To" placeholderTextColor={'#9fa6b0'}/> */}
               {/* <TextInput style={styles.input2} placeholder="PKR Offer your fare" keyboardType="numeric" placeholderTextColor={'#9fa6b0'} /> */}
             </View>
-            <View style={{...styles.buttonContainer,paddingHorizontal: 20}}>
-            <TouchableOpacity>
-                  <Text style={{marginHorizontal: 10,fontSize: 22}}>💵</Text>
-                </TouchableOpacity>
-            <TouchableOpacity style={styles.findDriverButton}>
-              <Text style={styles.buttonText2}>Find a driver</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-                  <Text style={{marginHorizontal: 10,fontSize: 22}}>⚙️</Text>
-                </TouchableOpacity>
+            <View style={{ ...styles.buttonContainer, paddingHorizontal: 20 }}>
+              <TouchableOpacity>
+              <Image
+                  source={require('@/assets/images/dollar.png')}
+                  style={{ width: 26, height: 26,marginHorizontal: 10, }}
+                />
+                {/* <Text style={{ marginHorizontal: 10, fontSize: 22 }}>💵</Text> */}
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.findDriverButton}>
+                <Text style={styles.buttonText2}>Find a driver</Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+              <Image
+                  source={require('@/assets/images/settings.png')}
+                  style={{ width: 26, height: 26,marginHorizontal: 10, }}
+                />
+              </TouchableOpacity>
             </View>
           </View>
         </SafeAreaView>
@@ -333,13 +383,13 @@ const styles = StyleSheet.create({
   container2: {
     position: 'absolute',
     zIndex: 10,
-    width: '100%',
+    // width: '100%',
     bottom: 0,
     padding: 16,
-    backgroundColor: '#272c32',
+    backgroundColor: '#1c1f24',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-  },countryPicker: {
+  }, countryPicker: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingRight: 5,
@@ -347,11 +397,14 @@ const styles = StyleSheet.create({
   },
   rideOptions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
+    marginVertical: 12,
     marginBottom: 16,
+    alignItems: 'center',
   },
   option: {
     alignItems: 'center',
+    paddingHorizontal: 10,
   },
   optionText: {
     color: 'white',
@@ -359,11 +412,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   locationFareInput: {
-    backgroundColor: '#272c32',
+    backgroundColor: '#1c1f24',
     padding: 12,
     borderRadius: 8,
     marginBottom: 0,
-  },flag: {
+  }, flag: {
     fontSize: 17,
     marginRight: 2,
   },
@@ -377,7 +430,7 @@ const styles = StyleSheet.create({
   locationText: {
     color: 'white',
     fontSize: 16,
-    textAlign : 'center',
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -409,167 +462,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'semibold',
   },
-  buttonContainer:{
+  buttonContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent : 'space-between',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%'
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React from 'react';
-// import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-// import { FontAwesome } from '@expo/vector-icons';
-
-// const MapBottomLayout = () => {
-//   return (
-<View style={styles.container2}>
-  {/* Ride options */}
-  <View style={styles.rideOptions}>
-    <TouchableOpacity style={styles.option}>
-      <FontAwesome name="motorcycle" size={24} color="#1a73e8" />
-      <Text style={styles.optionText}>Moto</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.option}>
-      <FontAwesome name="car" size={24} color="black" />
-      <Text style={styles.optionText}>Ride Mini</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.option}>
-      <FontAwesome name="snowflake-o" size={24} color="black" />
-      <Text style={styles.optionText}>Ride A/C</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.option}>
-      <FontAwesome name="truck" size={24} color="black" />
-      <Text style={styles.optionText}>Auto</Text>
-    </TouchableOpacity>
-    <TouchableOpacity style={styles.option}>
-      <FontAwesome name="suitcase" size={24} color="black" />
-      <Text style={styles.optionText}>City to city</Text>
-    </TouchableOpacity>
-  </View>
-
-  {/* Location and fare input */}
-  <View style={styles.locationFareInput}>
-    <View style={styles.locationRow}>
-      <Text style={styles.locationText}>KB Rd (Bhittaiabad, Block 9, Bhittaiabad)</Text>
-    </View>
-    <TextInput style={styles.input2} placeholder="To" />
-    <TextInput style={styles.input2} placeholder="PKR Offer your fare" keyboardType="numeric" />
-  </View>
-
-  {/* Find a driver button */}
-  <TouchableOpacity style={styles.findDriverButton}>
-    <Text style={styles.buttonText2}>Find a driver</Text>
-  </TouchableOpacity>
-</View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container2: {
-//     padding: 16,
-//     backgroundColor: '#2a2d2e',
-//     borderTopLeftRadius: 12,
-//     borderTopRightRadius: 12,
-//   },
-//   rideOptions: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-around',
-//     marginBottom: 16,
-//   },
-//   option: {
-//     alignItems: 'center',
-//   },
-//   optionText: {
-//     color: 'white',
-//     fontSize: 12,
-//     marginTop: 4,
-//   },
-//   locationFareInput: {
-//     backgroundColor: '#353839',
-//     padding: 12,
-//     borderRadius: 8,
-//     marginBottom: 16,
-//   },
-//   locationRow: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     marginBottom: 8,
-//   },
-//   locationText: {
-//     color: 'white',
-//     fontSize: 14,
-//   },
-//   input2: {
-//     backgroundColor: '#2a2d2e',
-//     padding: 10,
-//     borderRadius: 6,
-//     color: 'white',
-//     marginTop: 8,
-//   },
-//   findDriverButton: {
-//     backgroundColor: '#1dbf73',
-//     paddingVertical: 12,
-//     borderRadius: 6,
-//     alignItems: 'center',
-//   },
-//   buttonText2: {
-//     color: 'white',
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//   },
-// });
-
-// export default MapBottomLayout;
