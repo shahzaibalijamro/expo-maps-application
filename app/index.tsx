@@ -157,7 +157,7 @@ export default function Index() {
             keyboardType="default"
           />
           <View style={{ position: 'absolute', top: 20, flexDirection: 'row', justifyContent: 'space-between', width: '100%', zIndex: 20 }}>
-            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 50, height: 50, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, left: 20 }}>
+            <TouchableOpacity style={{ backgroundColor: '#272c32', position: 'absolute', width: 50, height: 50, borderRadius: 150, justifyContent: 'center', alignItems: 'center', marginLeft: 'auto', top: 10, zIndex: 20, marginTop: 20, marginBottom: 10, left: 20 }} onPress={()=> router.push("/drawer/")}>
               {/* <FontAwesome6 name="bars" size={26} color="white" /> */}
               <Image
                   source={require('@/assets/images/menu.png')}
