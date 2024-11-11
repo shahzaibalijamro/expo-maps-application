@@ -1,4 +1,6 @@
 import { Stack } from "expo-router";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Drawer } from 'expo-router/drawer';
 import "../global.css";
 import { enableScreens } from 'react-native-screens';
 export default function RootLayout() {
@@ -12,7 +14,6 @@ export default function RootLayout() {
       <Stack.Screen options={{headerShown : false,animation:"ios"}} name="city" />
       <Stack.Screen options={{headerShown : false,animation:"ios"}} name="confirmCity" />
       <Stack.Screen options={{headerShown : false,animation:"ios"}} name="final" />
-      {/* <Stack.Screen options={{headerShown : false}} name="login" /> */}
     </Stack>
   );
 }
