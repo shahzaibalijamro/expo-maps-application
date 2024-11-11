@@ -109,7 +109,14 @@ export default function JoinScreen() {
               console.log(e);
             }
           };
-          storeData();
+          const storeEmail = async () => {
+            try {
+              await AsyncStorage.setItem('email', email);
+            } catch (e) {
+              console.log(e);
+            }
+          };
+          storeEmail();
           const addUser = async () => {
             const docRef = await addDoc(collection(db, "users"), {
               email: email,

@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { auth, db } from '@/config/firebase/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 SplashScreen.preventAutoHideAsync();
@@ -23,7 +23,7 @@ interface User {
 export default function ConfirmInfoScreen() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
-  const [email,setEmail] = useState<string | undefined>('')
+  const [email,setEmail] = useState<string | undefined | null>('')
   const [userData, setUserData] = useState<User | null>(null)
   const [image, setImage] = useState<string | null>(null);
   const toastConfig = {
@@ -70,50 +70,28 @@ export default function ConfirmInfoScreen() {
     OpenSans_600SemiBold,
     OpenSans_700Bold,
   });
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('user-profile');
-        console.log(jsonValue);
-        if (jsonValue) {
-          const userProfile = JSON.parse(jsonValue);
-          setPhoneNumber(userProfile.phoneNumber)
-          setUserName(userProfile.name)
-          setEmail(userProfile.email)
-          setImage(userProfile.pfp)
-          
-        }else {
-          getUser();
-        }
-      } catch (e) {
-        // error reading value
-      }
-    };
-    const loadImage = async () => {
-      const savedImage = await AsyncStorage.getItem('profileImage');
-      if (savedImage) {
-        setImage(savedImage);
-      }
-    };
-    loadImage();
-    const getUser = async () => {
-      const q = query(collection(db, "users"), where("uid", "==", auth.currentUser?.uid));
-      console.log(auth.currentUser?.uid);
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        setUserData({ ...(doc.data() as User), docId: doc.id })
-      });
-    };
-    console.log(userData);
-    getData();
-  }, []);
-  useEffect(() => {
-    if (userData) {
-      setEmail(userData.email);
-      setUserName(userData.name);
-      setPhoneNumber(userData.phoneNumber)
+  const confirmUser = async () => {
+    try {
+      await AsyncStorage.setItem('newUser', 'true');
+    } catch (e) {
+      console.log(e);
     }
-  }, [userData]);
+  };
+  useEffect(() => {
+    const getUser = async () => {
+      const email = await AsyncStorage.getItem('email');
+      setEmail(email)
+      const q = query(collection(db, "profiles"), where("uid", "==", auth.currentUser?.uid));
+      const querySnapshot = await getDocs(q);
+      const arr = querySnapshot.docs.map((doc) => ({ ...(doc.data() as User), docId: doc.id })
+      );
+      if (arr.length > 0) {
+        confirmUser();
+        router.push("/")
+      }
+    };
+    getUser()
+  }, []);
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
@@ -140,22 +118,24 @@ export default function ConfirmInfoScreen() {
     }
   };
   const registerUser = async () => {
+    const email = await AsyncStorage.getItem('email');
     if (image) {
       try {
-        const confirmUserRef = doc(db, "users", userData?.docId);
-        await updateDoc(confirmUserRef, {
+        const docRef = await addDoc(collection(db, "profiles"), {
           name: userName,
-          email: userData?.email,
+          email: email,
           phoneNumber: phoneNumber,
-          docId: userData?.docId,
-          pfp: image
+          pfp: image,
+          uid: auth.currentUser?.uid
         });
+        console.log("Document written with ID: ", docRef.id);
         storeData({
           name: userName,
-          email: userData?.email,
+          email: email,
           phoneNumber: phoneNumber,
           docId: userData?.docId,
-          pfp: image
+          pfp: image,
+          uid: auth.currentUser?.uid
         })
         router.push("/city")
       } catch (error) {
@@ -168,6 +148,8 @@ export default function ConfirmInfoScreen() {
   if (!fontsLoaded) {
     return null;
   }
+  console.log(userData);
+  
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -200,7 +182,7 @@ export default function ConfirmInfoScreen() {
         <Text style={{ ...styles.label, color: '#8e8e93' }}>Email</Text>
         <TextInput
           style={{ ...styles.input, color: '#8e8e93' }}
-          value={email}
+          value={email ? email : ''}
           editable={false}
         />
       </View>
